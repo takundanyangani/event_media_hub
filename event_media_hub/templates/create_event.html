@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Create Event — EventHub{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon">🎉</div>
+            <h1>Create an Event</h1>
+            <p>Give your event a name and share the code with guests</p>
+        </div>
+
+        <form method="POST" class="auth-form">
+            <div class="form-group">
+                <label for="event_name">Event Name</label>
+                <input id="event_name" type="text" name="event_name"
+                       placeholder="e.g. Sarah's Birthday 2025" required autofocus>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Create Event</button>
+        </form>
+
+        <p class="auth-footer">
+            <a href="/dashboard">← Back to Dashboard</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
