@@ -156,4 +156,4 @@ This project is licensed under the MIT License.
 
 ## 👨‍💻 Author
 
-Built by **[Your Name]** — feel free to reach out or star the repo if you found it useful!
+Built by **Takunda Nyangani** — feel free to reach out or star the repo if you found it useful!
