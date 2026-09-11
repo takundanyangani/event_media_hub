@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Local configuration and secrets
+.env
+
+# App data (created at runtime)
+database.db
+*.db
+uploads/
+instance/
+static/event_*.zip
+
+# Editors and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% set breadcrumbs = [("Home", url_for('index')), ("Your events", url_for('dashboard')), ("Join an event", None)] %}
+{% block title %}{% if invited_event %}Join {{ invited_event.name }}{% else %}Join an event{% endif %} | {{ site_name }}{% endblock %}
+{% block meta_description %}Enter the 6-character code from your event organiser to join their private photo and video gallery.{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon" aria-hidden="true">🔗</div>
+            {% if invited_event %}
+                <h1>Join “{{ invited_event.name }}”</h1>
+                <p>You've been invited to this event's private photo and video gallery.</p>
+            {% else %}
+                <h1>Join an event</h1>
+                <p>Enter the 6-character code shared by the event organiser.</p>
+            {% endif %}
+        </div>
+
+        {% if error %}
+            <div class="alert alert-error" role="alert">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('join_event') }}" class="auth-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {% if invited_event %}
+                <input type="hidden" name="code" value="{{ code }}">
+            {% else %}
+                <div class="form-group">
+                    <label for="code">Event code</label>
+                    <input id="code" class="code-input" type="text" name="code" value="{{ code }}"
+                           placeholder="e.g. K7M2QX" maxlength="8" autocomplete="off"
+                           autocapitalize="characters" spellcheck="false" required autofocus>
+                </div>
+            {% endif %}
+            <button type="submit" class="btn btn-primary btn-full">Join event</button>
+        </form>
+
+        <p class="auth-footer">
+            <a href="{{ url_for('dashboard') }}">← Back to your events</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

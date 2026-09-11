@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% set breadcrumbs = [("Home", url_for('index')), ("Log in", None)] %}
+{% block title %}Log in | {{ site_name }}{% endblock %}
+{% block meta_description %}Log in to Event Media Hub to open your event galleries, upload photos and videos, and download everything your guests have shared.{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <img class="auth-logo" src="{{ url_for('static', filename='favicon.svg') }}" alt="" width="48" height="48">
+            <h1>Log in to {{ site_name }}</h1>
+            <p>Welcome back — sign in to open your event galleries.</p>
+        </div>
+
+        {% if error %}
+            <div class="alert alert-error" role="alert">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('login') }}" class="auth-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input id="username" type="text" name="username" value="{{ username }}" required autocomplete="username" autocapitalize="none" spellcheck="false">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input id="password" type="password" name="password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Log in</button>
+        </form>
+
+        <p class="auth-footer">
+            New here? <a href="{{ url_for('signup', next=next_url) if next_url else url_for('signup') }}">Create an account</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

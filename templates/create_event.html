@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% set breadcrumbs = [("Home", url_for('index')), ("Your events", url_for('dashboard')), ("Create an event", None)] %}
+{% block title %}Create an event | {{ site_name }}{% endblock %}
+{% block meta_description %}Name your event and get a private gallery with a 6-character code and invite link to share with your guests.{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon" aria-hidden="true">🎉</div>
+            <h1>Create an event</h1>
+            <p>Give your event a name. You'll get a code and invite link to share with guests.</p>
+        </div>
+
+        {% if error %}
+            <div class="alert alert-error" role="alert">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('create_event') }}" class="auth-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <label for="event_name">Event name</label>
+                <input id="event_name" type="text" name="event_name" value="{{ event_name }}"
+                       placeholder="e.g. Tariro's 21st Birthday" maxlength="{{ max_length }}" required autofocus>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Create event</button>
+        </form>
+
+        <p class="auth-footer">
+            <a href="{{ url_for('dashboard') }}">← Back to your events</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

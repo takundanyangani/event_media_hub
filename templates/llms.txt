@@ -1,0 +1,17 @@
+# Event Media Hub
+
+> Event Media Hub is a private photo and video sharing web app for events. An organiser creates an event and shares a 6-character code or invite link; guests who join can upload photos and videos, like and comment on them, and download the whole gallery as a ZIP file.
+
+Event galleries are private: only signed-in members of an event can see its media, so there is no gallery content to index. The public pages below describe the app.
+
+## Public pages
+
+- [Home]({{ home_url }}): what the app does, how it works and its features
+- [Create an account]({{ signup_url }}): sign up to create or join events
+- [Log in]({{ login_url }}): sign in to an existing account
+
+## Details
+
+- Supported uploads: JPG, PNG, GIF and WebP photos; MP4, WebM and MOV videos
+- Built with Python, Flask and SQLite
+- [Source code](https://github.com/takundanyangani/event_media_hub): MIT licensed, by Takunda Nyangani

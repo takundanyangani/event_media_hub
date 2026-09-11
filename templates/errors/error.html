@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} | {{ site_name }}{% endblock %}
+{% block meta_description %}{{ message }}{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block canonical %}{% endblock %}
+
+{% block content %}
+<section class="error-page">
+    <p class="error-code">{{ code }}</p>
+    <h1>{{ heading }}</h1>
+    <p>{{ message }}</p>
+    <div class="error-actions">
+        {% if logged_in %}
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Go to your events</a>
+            {% if code == 403 %}<a href="{{ url_for('join_event') }}" class="btn btn-secondary">Join an event</a>{% endif %}
+        {% else %}
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Go to the home page</a>
+            <a href="{{ url_for('login') }}" class="btn btn-secondary">Log in</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

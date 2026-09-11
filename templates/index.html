@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}{{ site_name }} — Private photo &amp; video sharing for events{% endblock %}
+{% block meta_description %}Create a private gallery for any event, share a 6-character code or invite link with guests, and collect everyone's photos and videos in one place.{% endblock %}
+{% block structured_data %}
+    <script type="application/ld+json">{{ structured_data|tojson }}</script>
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-inner">
+        <p class="eyebrow">Private event galleries</p>
+        <h1>Collect every photo and video from your event in one place</h1>
+        <p class="hero-lead">Create a gallery, share a 6-character code with your guests, and let everyone add their photos and videos. Like and comment on your favourites, then download the whole collection as one ZIP file.</p>
+        <div class="hero-actions">
+            <a href="{{ url_for('signup') }}" class="btn btn-primary">Create a free account</a>
+            <a href="{{ url_for('login') }}" class="btn btn-secondary">Log in</a>
+        </div>
+    </div>
+</section>
+
+<section class="landing-section" aria-labelledby="how-it-works">
+    <h2 id="how-it-works">How it works</h2>
+    <ol class="steps">
+        <li class="step-card">
+            <span class="step-number" aria-hidden="true">1</span>
+            <h3>Create an event</h3>
+            <p>Give your event a name. You get a unique code like <span class="code-value">K7M2QX</span> and an invite link.</p>
+        </li>
+        <li class="step-card">
+            <span class="step-number" aria-hidden="true">2</span>
+            <h3>Invite your guests</h3>
+            <p>Share the code or link in your group chat. Guests sign up once and join in a couple of taps.</p>
+        </li>
+        <li class="step-card">
+            <span class="step-number" aria-hidden="true">3</span>
+            <h3>Everyone uploads</h3>
+            <p>Guests add photos and videos from their phones, and anyone in the event can download them all.</p>
+        </li>
+    </ol>
+</section>
+
+<section class="landing-section" aria-labelledby="features">
+    <h2 id="features">Everything you need to gather event memories</h2>
+    <div class="feature-grid">
+        <article class="feature-card">
+            <h3>Private by default</h3>
+            <p>Only signed-in guests who joined with your code can see the gallery. Photos and videos are never public.</p>
+        </article>
+        <article class="feature-card">
+            <h3>Photos and videos</h3>
+            <p>Upload JPG, PNG, GIF and WebP photos plus MP4, WebM and MOV videos — several files at once.</p>
+        </article>
+        <article class="feature-card">
+            <h3>Likes and comments</h3>
+            <p>React to your favourite shots and leave comments, just like a shared group album.</p>
+        </article>
+        <article class="feature-card">
+            <h3>Download everything</h3>
+            <p>Save the whole gallery as a single ZIP file, with each file's original name.</p>
+        </article>
+        <article class="feature-card">
+            <h3>Organiser controls</h3>
+            <p>Guests can remove their own uploads. Organisers can remove any file or delete the whole event.</p>
+        </article>
+        <article class="feature-card">
+            <h3>Works on any device</h3>
+            <p>Runs in the browser on phones, tablets and computers, with nothing to install.</p>
+        </article>
+    </div>
+</section>
+
+<section class="landing-cta" aria-labelledby="get-started">
+    <h2 id="get-started">Ready for your next event?</h2>
+    <p>Set up a private gallery in under a minute.</p>
+    <a href="{{ url_for('signup') }}" class="btn btn-primary">Create your first event</a>
+    <p class="landing-note">Already have a code? <a href="{{ url_for('login', next=url_for('join_event')) }}">Log in to join an event</a>.</p>
+</section>
+{% endblock %}

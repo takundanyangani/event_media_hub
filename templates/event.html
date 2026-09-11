@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% set breadcrumbs = [("Home", url_for('index')), ("Your events", url_for('dashboard')), (event.name, None)] %}
+{% block title %}{{ event.name }} | {{ site_name }}{% endblock %}
+{% block meta_description %}Private gallery for {{ event.name }}: upload, like and comment on photos and videos, and download everything guests have shared.{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+
+<section class="event-hero">
+    <div class="event-hero-inner">
+        <h1>{{ event.name }}</h1>
+        <div class="event-hero-meta">
+            <span class="event-code-pill">Code: {{ event.code }}</span>
+            <span class="media-count">{{ media|length }} item{{ 's' if media|length != 1 }}</span>
+            {% if is_creator %}<span class="member-badge">You're the organiser</span>{% endif %}
+        </div>
+        <div class="event-hero-actions">
+            {% if media %}
+                <a href="{{ url_for('download_event', event_id=event.id) }}" class="btn btn-secondary" download>⬇ Download all ({{ media|length }})</a>
+            {% endif %}
+            {% if is_creator %}
+                <form method="POST" action="{{ url_for('delete_event', event_id=event.id) }}" class="inline-form"
+                      data-confirm="Delete “{{ event.name }}” and all of its photos and videos? This can't be undone.">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger">Delete event</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="invite-section" aria-labelledby="invite-heading">
+    <div class="section-inner">
+        <h2 id="invite-heading">Invite guests</h2>
+        <p class="hint">Share this link, or ask guests to enter the code <strong class="code-value">{{ event.code }}</strong> on the Join an event page.</p>
+        <div class="invite-box">
+            <label for="invite-link" class="visually-hidden">Invite link</label>
+            <input id="invite-link" type="text" value="{{ invite_url }}" readonly>
+            <button type="button" class="btn btn-secondary" data-copy-target="invite-link">Copy link</button>
+        </div>
+    </div>
+</section>
+
+<section class="upload-section" aria-labelledby="upload-heading">
+    <div class="section-inner">
+        <h2 id="upload-heading">Upload photos and videos</h2>
+        <form method="POST" action="{{ url_for('upload_media', event_id=event.id) }}" enctype="multipart/form-data"
+              class="upload-form" data-upload-form>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label class="file-drop-zone" for="media-input" data-drop-zone>
+                <span class="drop-icon" aria-hidden="true">📁</span>
+                <span class="drop-text">Choose photos or videos</span>
+                <span class="drop-hint">JPG, PNG, GIF, WebP, MP4, WebM or MOV &middot; up to {{ max_upload_mb }} MB per upload</span>
+                <input id="media-input" class="visually-hidden" type="file" name="media" accept="{{ accept }}" multiple required>
+            </label>
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+    </div>
+</section>
+
+<section class="gallery-section" aria-labelledby="gallery-heading">
+    <h2 id="gallery-heading" class="gallery-title">Gallery</h2>
+
+    {% if media %}
+        <div class="media-grid">
+            {% for item in media %}
+            {% set description = ("Photo" if item.kind == "image" else "Video") ~ " from " ~ event.name ~ ((", shared by " ~ item.uploader) if item.uploader else "") %}
+            <article class="media-card" id="media-{{ item.id }}">
+                <div class="media-preview">
+                    {% if item.kind == "image" %}
+                        <img src="{{ url_for('uploaded_file', filename=item.filename) }}" alt="{{ description }}" loading="lazy" decoding="async">
+                    {% elif item.kind == "video" %}
+                        <video controls preload="metadata" aria-label="{{ description }}" src="{{ url_for('uploaded_file', filename=item.filename) }}"></video>
+                    {% else %}
+                        <a class="file-placeholder" href="{{ url_for('uploaded_file', filename=item.filename) }}">Preview not available — download file</a>
+                    {% endif %}
+                </div>
+
+                <div class="media-info">
+                    <p class="media-meta">Shared by <strong>{{ item.uploader or "a guest" }}</strong></p>
+
+                    <div class="media-actions">
+                        <form method="POST" action="{{ url_for('toggle_like', event_id=event.id, media_id=item.id) }}" class="inline-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-sm btn-like" aria-pressed="{{ 'true' if item.liked else 'false' }}"
+                                    aria-label="{{ 'Unlike' if item.liked else 'Like' }} ({{ item.like_count }} {{ 'like' if item.like_count == 1 else 'likes' }})">
+                                ❤ {{ item.like_count }}
+                            </button>
+                        </form>
+                        {% if item.can_delete %}
+                        <form method="POST" action="{{ url_for('delete_media', event_id=event.id, media_id=item.id) }}" class="inline-form"
+                              data-confirm="Delete this file? This can't be undone.">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                        {% endif %}
+                    </div>
+
+                    <div class="comments-section">
+                        <p class="comments-label">Comments</p>
+                        <div class="comments-list">
+                            {% for comment in item.comments %}
+                                <div class="comment">
+                                    <strong>{{ comment.username }}</strong>
+                                    <span>{{ comment.text }}</span>
+                                </div>
+                            {% else %}
+                                <p class="no-comments">No comments yet.</p>
+                            {% endfor %}
+                        </div>
+
+                        <form method="POST" action="{{ url_for('add_comment', event_id=event.id, media_id=item.id) }}" class="comment-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <label for="comment-{{ item.id }}" class="visually-hidden">Add a comment</label>
+                            <input id="comment-{{ item.id }}" type="text" name="comment" placeholder="Add a comment…"
+                                   maxlength="{{ max_comment_length }}" required>
+                            <button type="submit" class="btn btn-sm btn-primary">Post</button>
+                        </form>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state centered">
+            <div class="empty-icon" aria-hidden="true">📷</div>
+            <p>No photos or videos yet. Be the first to upload!</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

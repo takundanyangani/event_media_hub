@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% set breadcrumbs = [("Home", url_for('index')), ("Your events", None)] %}
+{% block title %}Your events | {{ site_name }}{% endblock %}
+{% block meta_description %}See the event galleries you've created or joined, start a new event, or join one with a 6-character code.{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-inner">
+        <h1>Your events</h1>
+        <p>Manage your event galleries and media</p>
+    </div>
+    <div class="page-header-actions">
+        <a href="{{ url_for('create_event') }}" class="btn btn-primary">+ Create event</a>
+        <a href="{{ url_for('join_event') }}" class="btn btn-secondary">Join event</a>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+
+    <section class="dashboard-section" aria-labelledby="created-heading">
+        <h2 id="created-heading" class="section-title">
+            <span class="section-dot created" aria-hidden="true"></span>
+            Events you created
+        </h2>
+
+        {% if created_events %}
+            <ul class="events-list">
+                {% for event in created_events %}
+                <li class="event-card">
+                    <div class="event-card-body">
+                        <h3 class="event-name"><a href="{{ url_for('event_page', event_id=event.id) }}">{{ event.name }}</a></h3>
+                        <div class="event-card-meta">
+                            <span class="event-code-badge">
+                                <span class="code-label">Code</span>
+                                <span class="code-value">{{ event.code }}</span>
+                            </span>
+                            <span class="media-count">{{ event.media_count }} item{{ 's' if event.media_count != 1 }}</span>
+                        </div>
+                    </div>
+                    <div class="event-card-actions">
+                        <a href="{{ url_for('event_page', event_id=event.id) }}" class="btn btn-sm btn-primary" aria-label="Open {{ event.name }}">Open</a>
+                        <form method="POST" action="{{ url_for('delete_event', event_id=event.id) }}" class="inline-form"
+                              data-confirm="Delete “{{ event.name }}” and all of its photos and videos? This can't be undone.">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-sm btn-danger" aria-label="Delete {{ event.name }}">Delete</button>
+                        </form>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon" aria-hidden="true">🎉</div>
+                <p>No events yet. Create your first event!</p>
+                <a href="{{ url_for('create_event') }}" class="btn btn-primary">Create event</a>
+            </div>
+        {% endif %}
+    </section>
+
+    <section class="dashboard-section" aria-labelledby="joined-heading">
+        <h2 id="joined-heading" class="section-title">
+            <span class="section-dot joined" aria-hidden="true"></span>
+            Events you joined
+        </h2>
+
+        {% if joined_events %}
+            <ul class="events-list">
+                {% for event in joined_events %}
+                <li class="event-card">
+                    <div class="event-card-body">
+                        <h3 class="event-name"><a href="{{ url_for('event_page', event_id=event.id) }}">{{ event.name }}</a></h3>
+                        <div class="event-card-meta">
+                            <span class="member-badge">Member</span>
+                            <span class="media-count">{{ event.media_count }} item{{ 's' if event.media_count != 1 }}</span>
+                        </div>
+                    </div>
+                    <div class="event-card-actions">
+                        <a href="{{ url_for('event_page', event_id=event.id) }}" class="btn btn-sm btn-primary" aria-label="Open {{ event.name }}">Open</a>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon" aria-hidden="true">🔗</div>
+                <p>You haven't joined any events yet.</p>
+                <a href="{{ url_for('join_event') }}" class="btn btn-secondary">Join with a code</a>
+            </div>
+        {% endif %}
+    </section>
+
+</div>
+{% endblock %}
